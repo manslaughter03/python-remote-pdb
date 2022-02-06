@@ -20,7 +20,7 @@ def main():
 
     from pdb import Restart
 
-    opts, args = getopt.getopt(sys.argv[1:], 'mhc:', ['help', 'command=', 'port=', 'host=', 'quiet'])
+    opts, args = getopt.getopt(sys.argv[1:], 'mhc:', ['help', 'command=', 'port=', 'host=', 'quiet', 'reverse'])
 
     if not args:
         print(_usage)
@@ -31,6 +31,7 @@ def main():
     host = os.environ.get('REMOTE_PDB_HOST', '127.0.0.1')
     port = int(os.environ.get('REMOTE_PDB_PORT', '0'))
     quiet = False
+    reverse = False
     for opt, optarg in opts:
         if opt in ['-h', '--help']:
             print(_usage)
@@ -45,6 +46,8 @@ def main():
             port = int(optarg)
         elif opt in ['--quiet']:
             quiet = True
+        elif opt in ['--reverse']:
+            reverse = True
 
     mainpyfile = args[0]     # Get script filename
     if not run_as_module and not os.path.exists(mainpyfile):
@@ -70,7 +73,7 @@ def main():
     # modified by the script being debugged. It's a bad idea when it was
     # changed by the user from the command line. There is a "restart" command
     # which allows explicit specification of command line arguments.
-    pdb = RemotePdb(host, port, quiet=quiet)
+    pdb = RemotePdb(host, port, quiet=quiet, reverse=reverse)
     pdb.rcLines.extend(commands)
     while True:
         try:
